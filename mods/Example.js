@@ -6,13 +6,13 @@ let fullbrightToggled = false;
 
 function fullbrightToggle() {
   if (fullbrightToggled == false) {
-    ModAPI.blocks.air.lightValue = 12
-    ModAPI.blocks.reload()
-    fullbrightToggled = !fullbrightToggled
+    ModAPI.blocks.air.lightValue = 12;
+    ModAPI.blocks.reload();
+    fullbrightToggled = !fullbrightToggled;
   } else if (fullbrightToggled == true) {
-    ModAPI.blocks.air.lightValue = 0
-    ModAPI.blocks.reload()
-    fullbrightToggled = !fullbrightToggled
+    ModAPI.blocks.air.lightValue = 0;
+    ModAPI.blocks.reload();
+    fullbrightToggled = !fullbrightToggled;
   }
 }
 
@@ -327,13 +327,56 @@ document.addEventListener("mouseup", function () {
     isDragging = false;
 });
 
-  ModAPI.displayToChat({msg: "§5Client has succesfully loaded!"})
-  ModAPI.displayToChat({msg: "§5Menu bind is currently set to \"§3P§5\"!"})
+// Function to create Nether portal 5 blocks in front of the player
+function createNetherPortal() {
+  const player = ModAPI.player;
+  const direction = player.direction; // Assuming there's a property for player direction
+  const position = player.position;
+  let portalX, portalZ;
 
-}, 500);
+  if (direction == "NORTH") {
+    portalX = position.x;
+    portalZ = position.z - 5;
+  } else if (direction == "SOUTH") {
+    portalX = position.x;
+    portalZ = position.z + 5;
+  } else if (direction == "WEST") {
+    portalX = position.x - 5;
+    portalZ = position.z;
+  } else if (direction == "EAST") {
+    portalX = position.x + 5;
+    portalZ = position.z;
+  }
+
+  const portalY = position.y; // Place the portal at the same height as the player
+
+  // Create the portal frame with obsidian blocks
+  ModAPI.setBlock(portalX, portalY, portalZ, "obsidian");
+  ModAPI.setBlock(portalX + 1, portalY, portalZ, "obsidian");
+  ModAPI.setBlock(portalX + 2, portalY, portalZ, "obsidian");
+  ModAPI.setBlock(portalX + 2, portalY + 1, portalZ, "obsidian");
+  ModAPI.setBlock(portalX + 2, portalY + 2, portalZ, "obsidian");
+  ModAPI.setBlock(portalX + 2, portalY + 3, portalZ, "obsidian");
+  ModAPI.setBlock(portalX + 1, portalY + 3, portalZ, "obsidian");
+  ModAPI.setBlock(portalX, portalY + 3, portalZ, "obsidian");
+  ModAPI.setBlock(portalX, portalY + 2, portalZ, "obsidian");
+  ModAPI.setBlock(portalX, portalY + 1, portalZ, "obsidian");
+
+  // Create the portal with the nether portal block
+  ModAPI.setBlock(portalX + 1, portalY + 1, portalZ, "nether_portal");
+  ModAPI.setBlock(portalX + 1, portalY + 2, portalZ, "nether_portal");
+}
 
 ModAPI.addEventListener("key", event => {
-  if(event.key == 54){
-      toggleUI()
+  if (event.key == 54) { // Key P
+    toggleUI();
   }
-})
+  if (event.key == 43) { // Key + 
+    createNetherPortal();
+  }
+});
+
+ModAPI.displayToChat({msg: "§5Client has succesfully loaded!"})
+ModAPI.displayToChat({msg: "§5Menu bind is currently set to \"§3P§5\"!"})
+
+}, 500);
